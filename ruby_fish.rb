@@ -7,7 +7,7 @@ class GameWindow < Gosu::Window
 
     @background_image = Gosu::Image.new(self, "media/underwater-background.jpg", true)
     @player = Player.new self
-    @green_fish = Green.new self
+    @green_fish_array = Array.new(10) { |i| Green.new self }
     @jellyfish = Jellyfish.new self
   end
 
@@ -20,14 +20,14 @@ class GameWindow < Gosu::Window
     close if button_down? Gosu::KbEscape
 
     @player.stayInside
-    @green_fish.update
+    @green_fish_array.each { |fish| fish.update }
     @jellyfish.update
   end
 
   def draw 
     @background_image.draw(0, 0, 0)
     @player.draw
-    @green_fish.draw
+    @green_fish_array.each { |fish| fish.draw }
     @jellyfish.draw
   end
 end
@@ -98,35 +98,60 @@ class Player
 end
 
 class Green
-  def initialize(window)
+  def initialize window
     @window = window
     @width = 256
     @height = 256
     @image = Gosu::Image.load_tiles @window, "media/green.png", 
                                     @width, @height, true
-    @x = 0
-    @y = 0
-    @nextFrame = 0
-    @size = 0.6
-    @direction = :right
-    @frame = 0
+    
+    setNewFish
   end
 
-  def update
-    @frame += 1 if @nextFrame == 5
-    if @nextFrame < 5
+  def setNewFish
+    random = Random.new
+    @size = random.rand(0.1..0.9)
+    random = Random.new
+    @velosity = random.rand(1..6)
+
+    random = Random.new
+    number = random.rand(0..1)
+    if number == 0
+      @x = 0 - @width * @size 
+      @direction = :right
+      #the fish apperars from left
+    elsif number == 1
+      @x = @window.width + @width * @size
+      @direction = :left
+      #the fish apperars from right
+    end
+
+    random = Random.new
+    @y = random.rand(@window.height - @height * @size)
+
+    @frame = 0
+    @nextFrame = 0
+  end
+
+  def substitudeTheFish
+    setNewFish if @x >= @window.width + @width * @size or @x <= 0 - @width * @size
+  end
+
+  def update 
+    howFast = 10 - @velosity
+    @frame += 1 if @nextFrame == howFast
+    if @nextFrame < howFast
       @nextFrame += 1
-    elsif @nextFrame == 5
+    elsif @nextFrame == howFast
       @nextFrame = 0
     end
         
     case @direction
-      when :right   then @x += 3
-      when :left    then @x -= 3
+      when :right   then @x += @velosity
+      when :left    then @x -= @velosity
     end
 
-    @direction = :left if @x >= (@window.width - @width * @size) 
-    @direction = :right if @x <= 0
+    substitudeTheFish
   end
 
   def draw

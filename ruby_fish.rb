@@ -8,6 +8,7 @@ class GameWindow < Gosu::Window
     @background_image = Gosu::Image.new(self, "media/underwater-background.jpg", true)
     @player = Player.new self
     @green_fish = Green.new self
+    @jellyfish = Jellyfish.new self
   end
 
   def update
@@ -20,12 +21,14 @@ class GameWindow < Gosu::Window
 
     @player.stayInside
     @green_fish.update
+    @jellyfish.update
   end
 
   def draw 
     @background_image.draw(0, 0, 0)
     @player.draw
     @green_fish.draw
+    @jellyfish.draw
   end
 end
 
@@ -138,4 +141,37 @@ class Green
   end
 end
 
+class Jellyfish
+  def initialize window
+    @window = window
+    @x = 400
+    @y = 500
+    @width = 115
+    @height = 125
+    @image = Gosu::Image.load_tiles @window, "media/jellyfish.png",
+                                    @width, @height, true
+    @frame = 0
+    @nextFrame = 0                               
+  end
+
+  def update
+    @x += 1
+    @y -= 0.5
+    @x %= @window.width
+    @y %= @window.height
+
+    @frame += 1 if @nextFrame == 4
+    if @nextFrame < 4
+      @nextFrame += 1
+    elsif @nextFrame == 4
+      @nextFrame = 0
+    end
+    @frame %= 20 
+
+  end
+
+  def draw
+    @image[@frame].draw @x, @y, 1
+  end
+end
 GameWindow.new.show

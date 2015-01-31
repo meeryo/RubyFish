@@ -7,7 +7,7 @@ class GameWindow < Gosu::Window
 
     @background_image = Gosu::Image.new(self, "media/underwater-background.jpg", true)
     @player = Player.new self
-    @green_fish_array = Array.new(10) { |i| Green.new self }
+    @green_fish_array = Array.new(10) { |i| Green.new self, @player }
     @jellyfish = Jellyfish.new self
   end
 
@@ -40,8 +40,37 @@ class Player
     @y = @window.height / 2
     @angle = 0
     @lookLeft = false
-    @size = 0.2
+    @size = 0.12
     @velosity = 4
+
+    @score = 0
+  end
+
+  def x 
+    @x
+  end
+
+  def y
+    @y
+  end
+
+  def size
+    @size
+  end
+
+  def ate
+    @score += 1
+    if @score % 5 == 0
+      @size += 0.01
+    end
+  end
+
+  def halfWidth
+    @image.width * @size / 2
+  end
+
+  def halfHeight
+    @image.height * @size / 5
   end
 
   def goRight
@@ -98,13 +127,13 @@ class Player
 end
 
 class Green
-  def initialize window
+  def initialize window, player
     @window = window
     @width = 256
     @height = 256
     @image = Gosu::Image.load_tiles @window, "media/green.png", 
                                     @width, @height, true
-    
+    @player = player
     setNewFish
   end
 
@@ -112,7 +141,7 @@ class Green
     random = Random.new
     @size = random.rand(0.1..0.9)
     random = Random.new
-    @velosity = random.rand(1..6)
+    @velosity = random.rand(1..4)
 
     random = Random.new
     number = random.rand(0..1)
@@ -137,7 +166,17 @@ class Green
     setNewFish if @x >= @window.width + @width * @size or @x <= 0 - @width * @size
   end
 
+  def eaten
+    if (@x - @player.x).abs < (@width - 10) * @size / 2 + @player.halfWidth and
+       (@y - @player.y).abs < (@height - 40) * @size / 3 + @player.halfHeight and
+       @size <= @player.size * 1.6
+      @player.ate
+      setNewFish  
+    end  
+  end
+
   def update 
+    eaten
     howFast = 10 - @velosity
     @frame += 1 if @nextFrame == howFast
     if @nextFrame < howFast
@@ -150,7 +189,6 @@ class Green
       when :right   then @x += @velosity
       when :left    then @x -= @velosity
     end
-
     substitudeTheFish
   end
 
@@ -162,7 +200,7 @@ class Green
       when :right  then image = @image[r]
       when :left   then image = @image[l]
     end
-    image.draw @x, @y, 1, @size, @size
+    image.draw_rot @x, @y, 1, 0, 0.5, 0.5, @size, @size
   end
 end
 

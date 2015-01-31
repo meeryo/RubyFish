@@ -12,16 +12,11 @@ class GameWindow < Gosu::Window
   end
 
   def update
-    @player.goLeft if button_down? Gosu::KbLeft
-    @player.goRight if button_down? Gosu::KbRight
-    @player.goUp if button_down? Gosu::KbUp
-    @player.goDown if button_down? Gosu::KbDown 
-
-    close if button_down? Gosu::KbEscape
-
-    @player.stayInside
+    @player.update
     @green_fish_array.each { |fish| fish.update }
     @jellyfish.update
+
+    close if button_down? Gosu::KbEscape
   end
 
   def draw 
@@ -44,6 +39,7 @@ class Player
     @velosity = 4
 
     @score = 0
+    @alive = true
   end
 
   def x 
@@ -63,6 +59,10 @@ class Player
     if @score % 5 == 0
       @size += 0.01
     end
+  end
+
+  def dies
+    @alive = false
   end
 
   def halfWidth
@@ -112,12 +112,24 @@ class Player
     @y %= @window.height
   end
 
-  def toDraw
-    if !@lookLeft
-      @image.draw_rot(@x, @y, 1, @angle, 0.5, 0.5, @size, @size)
+  def update
+    if @alive
+      goLeft if @window.button_down? Gosu::KbLeft
+      goRight if @window.button_down? Gosu::KbRight
+      goUp if @window.button_down? Gosu::KbUp
+      goDown if @window.button_down? Gosu::KbDown 
+
+      stayInside
     end
-    if @lookLeft
-      @image.draw_rot(@x, @y, 1, @angle, 0.5, 0.5, -@size, @size)
+  end
+
+  def toDraw
+    if @alive
+      if @lookLeft
+        @image.draw_rot(@x, @y, 1, @angle, 0.5, 0.5, -@size, @size)
+      else
+        @image.draw_rot(@x, @y, 1, @angle, 0.5, 0.5, @size, @size)
+      end
     end
   end
 
@@ -166,17 +178,20 @@ class Green
     setNewFish if @x >= @window.width + @width * @size or @x <= 0 - @width * @size
   end
 
-  def eaten
+  def eatOrBeEaten
     if (@x - @player.x).abs < (@width - 10) * @size / 2 + @player.halfWidth and
        (@y - @player.y).abs < (@height - 40) * @size / 3 + @player.halfHeight and
-       @size <= @player.size * 1.6
-      @player.ate
-      setNewFish  
+        if @size <= @player.size * 1.6
+         @player.ate
+         setNewFish  
+        else 
+          @player.dies
+       end
     end  
   end
 
   def update 
-    eaten
+    eatOrBeEaten
     howFast = 10 - @velosity
     @frame += 1 if @nextFrame == howFast
     if @nextFrame < howFast

@@ -57,7 +57,7 @@ class Player
   def ate
     @score += 1
     if @score % 5 == 0
-      @size += 0.01
+      @size += 0.1
     end
   end
 

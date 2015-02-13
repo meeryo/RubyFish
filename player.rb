@@ -28,11 +28,16 @@ class Player
 
   def grow 
     if @score % 5 == 0
-      @size += 0.1
+      case @growth
+      when :baby
+        @size += 0.1
+      when :adult
+        @size += 0.01
+      end
     end
 
     if @score >= 10
-      @size = 0.2
+      @size = 0.2 if @growth == :baby
       @growth = :adult
       @image = Gosu::Image.new(@window, "media/Ruby-Fish-Adult.png", false)
     end
@@ -171,17 +176,17 @@ class Player
 
       case @stingedFor 
       when (240..300)
-        @font.draw("5", 400, 350, 1)
+        @font.draw("5", 450, 350, 1)
       when (180..239)
-        @font.draw("4", 400, 350, 1)
+        @font.draw("4", 450, 350, 1)
       when (120..179)
-        @font.draw("3", 400, 350, 1)
+        @font.draw("3", 450, 350, 1)
       when (60..111)
-        @font.draw("2", 400, 350, 1)
+        @font.draw("2", 450, 350, 1)
       when (2..59)
-        @font.draw("1", 400, 350, 1)
+        @font.draw("1", 450, 350, 1)
       when 1
-        @font.draw("0", 400, 350, 1)
+        @font.draw("0", 450, 350, 1)
       end
 
     else

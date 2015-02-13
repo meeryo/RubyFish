@@ -7,8 +7,9 @@ class GreenFish
     @window = window
     @width = 256
     @height = 256
-    @image = Gosu::Image.load_tiles @window, "media/green.png",
-                                    @width, @height, true
+    @image = Gosu::Image.load_tiles @window, File.dirname(__FILE__) + 
+                                              "/media/green.png",
+                                               @width, @height, true
     set_new_fish
   end
 

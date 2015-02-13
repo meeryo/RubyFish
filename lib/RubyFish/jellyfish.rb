@@ -9,8 +9,9 @@ class Jellyfish
     @y = 500
     @width = 115
     @height = 125
-    @image = Gosu::Image.load_tiles @window, "media/jellyfish.png",
-                                    @width, @height, true
+    @image = Gosu::Image.load_tiles @window, File.dirname(__FILE__) +
+                                              "/media/jellyfish.png",
+                                              @width, @height, true
     @frame = 0
     @nextFrame = 0                               
   end

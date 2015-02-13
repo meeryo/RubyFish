@@ -1,8 +1,8 @@
 require "gosu"
-require_relative 'player'
-require_relative 'green'
-require_relative 'jellyfish'
-require_relative 'menu'
+require 'RubyFish/player'
+require 'RubyFish/green'
+require 'RubyFish/jellyfish'
+require 'RubyFish/menu'
 
 class GameWindow < Gosu::Window
   def initialize 
@@ -10,7 +10,9 @@ class GameWindow < Gosu::Window
     self.caption = "Ruby Fish Game"
     @mode = :menu
 
-    @background_image = Gosu::Image.new(self, "media/underwater-background.jpg", true)
+    @background_image = Gosu::Image.new self, File.dirname(__FILE__) + 
+                                              "/media/underwater-background.jpg", 
+                                              true
 
     @menu_screan = Menu.new self
     @jellyfish = Jellyfish.new self

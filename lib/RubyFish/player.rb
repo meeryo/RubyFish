@@ -1,14 +1,16 @@
 require "gosu"
-require_relative 'jellyfish'
-require_relative 'green'
+require 'RubyFish/jellyfish'
+require 'RubyFish/green'
 
 class Player
   attr_accessor :x, :y, :size, :width, :height
 
   def initialize window
     @window = window
-    @image = Gosu::Image.new(@window, "media/Ruby-Fish-Baby.png", false)
-    @font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
+    @image = Gosu::Image.new @window, File.dirname(__FILE__) +
+                                      "/media/Ruby-Fish-Baby.png",
+                                      false
+    @font = Gosu::Font.new @window, Gosu::default_font_name, 20
     @x = @window.width / 2
     @y = @window.height / 2
 
@@ -39,7 +41,9 @@ class Player
     if @score >= 10
       @size = 0.2 if @growth == :baby
       @growth = :adult
-      @image = Gosu::Image.new(@window, "media/Ruby-Fish-Adult.png", false)
+      @image = Gosu::Image.new @window, File.dirname(__FILE__) +
+                                        "media/Ruby-Fish-Adult.png",
+                                        false
     end
 
     # update collision dimentions

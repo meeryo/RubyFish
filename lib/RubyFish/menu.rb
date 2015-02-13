@@ -1,12 +1,17 @@
 require "gosu"
-require_relative 'menu_button'
+require 'RubyFish/menu_button'
 
 class Menu 
   def initialize window
     @window = window
-    image_start = Gosu::Image.new @window, "media/start_button.png", false
-    image_exit = Gosu::Image.new @window, "media/exit_button.png", false
-    @bubble = Gosu::Image.new @window, "media/bubble.png", false
+    p File.dirname(__FILE__) + "/media/start_button.png"
+    image_start = Gosu::Image.new @window, File.dirname(__FILE__) + "/media/start_button.png", false
+    image_exit = Gosu::Image.new @window, File.dirname(__FILE__) +
+                                          "/media/exit_button.png",
+                                          false
+    @bubble = Gosu::Image.new @window, File.dirname(__FILE__) +
+                                        "/media/bubble.png",
+                                        false
     
     @start_button = MenuButton.new @window, image_start, 450, 150, 0.5
     @exit_button = MenuButton.new @window, image_exit, 520, 480, 0.2

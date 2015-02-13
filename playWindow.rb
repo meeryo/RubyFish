@@ -17,7 +17,7 @@ class GameWindow < Gosu::Window
 
   def menu
     @menu_screan = Menu.new self
-    close if @mode == :menu and button_down? Gosu::KbEscape
+    #close if @mode == :menu and button_down? Gosu::KbEscape
   end
 
   def start_game
@@ -33,11 +33,6 @@ class GameWindow < Gosu::Window
     @player.stinged_by @jellyfish
     @player.update 
     @mode = :menu if @mode == :play and button_down? Gosu::KbEscape
-  end
-
-  def menu
-    @menu_screan = Menu.new self
-    close if @mode == :menu and button_down? Gosu::KbEscape
   end
 
   def update

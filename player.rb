@@ -3,11 +3,10 @@ require_relative 'jellyfish'
 require_relative 'green'
 
 class Player
-  attr_accessor :x, :y, :size, :width, :height, :growth
+  attr_accessor :x, :y, :size, :width, :height
 
-  def initialize window, jellyfish
+  def initialize window
     @window = window
-    @jellyfish = jellyfish
     @image = Gosu::Image.new(@window, "media/Ruby-Fish-Baby.png", false)
     @font = Gosu::Font.new(@window, Gosu::default_font_name, 20)
     @x = @window.width / 2
@@ -118,7 +117,7 @@ class Player
   end
 
   def smaller_than? fish
-    if growth == :baby
+    if @growth == :baby
       fish.size > size * 0.6
     else 
       fish.size > size * 1.7
@@ -151,9 +150,8 @@ class Player
     end
   end
 
-  def update other
+  def update
     if @alive
-      stinged_by other
       move
     end
   end
@@ -167,7 +165,7 @@ class Player
       end
       @font.draw("#{@score} eaten", 900, 10, 1)
     else
-      @font.draw("You ate #{@score} fishes and then you were eaten.", 300, 350, 1)
+      @font.draw("You ate #{@score} fish and then you were eaten.", 300, 350, 1)
     end
   end
 

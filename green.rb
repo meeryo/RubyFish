@@ -1,16 +1,14 @@
 require "gosu"
-require_relative 'player'
 
 class GreenFish
   attr_reader :x, :y, :height, :width, :size
 
-  def initialize window, player
+  def initialize window
     @window = window
     @width = 256
     @height = 256
     @image = Gosu::Image.load_tiles @window, "media/green.png",
                                     @width, @height, true
-    @player = player
     set_new_fish
   end
 
@@ -48,7 +46,7 @@ class GreenFish
   end
 
   def set_frame
-    change_interval = 5 #10 - @velosity
+    change_interval = 10 - @velosity
 
     if @nextFrame == change_interval
       @frame += 1

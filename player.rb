@@ -150,6 +150,10 @@ class Player
     end
   end
 
+  def new_life
+    @alive = true
+  end
+
   def update
     if @alive
       move

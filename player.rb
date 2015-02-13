@@ -167,7 +167,23 @@ class Player
       else
         @image.draw_rot(@x, @y, 1, @angle, 0.5, 0.5, @size, @size)
       end
-      @font.draw("#{@score} eaten", 900, 10, 1)
+      @font.draw("#{@score} eaten", 890, 10, 1)
+
+      case @stingedFor 
+      when (240..300)
+        @font.draw("5", 400, 350, 1)
+      when (180..239)
+        @font.draw("4", 400, 350, 1)
+      when (120..179)
+        @font.draw("3", 400, 350, 1)
+      when (60..111)
+        @font.draw("2", 400, 350, 1)
+      when (2..59)
+        @font.draw("1", 400, 350, 1)
+      when 1
+        @font.draw("0", 400, 350, 1)
+      end
+
     else
       @font.draw("You ate #{@score} fish and then you were eaten.", 300, 350, 1)
     end

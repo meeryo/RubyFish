@@ -20,6 +20,7 @@ class GameWindow < Gosu::Window
 
   def start_new_game
     @player = Player.new self
+    @green_fish_array.each { |fish| fish.set_new_fish }
   end
 
   def play
@@ -28,17 +29,22 @@ class GameWindow < Gosu::Window
     @green_fish_array.each { |fish| fish.update }
     @player.stinged_by @jellyfish
     @player.update 
-    @mode = :menu if @mode == :play and button_down? Gosu::KbP
+
+    if @mode == :play and button_down? Gosu::KbP
+      @mode = :menu 
+    end
+
     if @mode == :play and button_down? Gosu::KbEscape
-       @mode = :menu
-       start_new_game 
+      @mode = :menu
+      start_new_game 
     end
   end
 
   def update
     @menu_screan if @mode == :menu
-    @mode = :play if @mode == :menu and @menu_screan.clicked? mouse_x, mouse_y
+    @mode = :play if @menu_screan.start? mouse_x, mouse_y
     play if @mode == :play
+    close if @menu_screan.exit? mouse_x, mouse_y
   end
 
   def draw 

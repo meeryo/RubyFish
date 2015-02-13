@@ -2,6 +2,7 @@ require "gosu"
 require_relative 'player'
 
 class GreenFish
+  attr_reader :x, :y, :height, :width, :size
 
   def initialize window, player
     @window = window
@@ -10,10 +11,10 @@ class GreenFish
     @image = Gosu::Image.load_tiles @window, "media/green.png",
                                     @width, @height, true
     @player = player
-    setNewFish
+    set_new_fish
   end
 
-  def setNewFish
+  def set_new_fish
     random = Random.new
     @size = random.rand(0.1..0.9)
 
@@ -46,7 +47,7 @@ class GreenFish
     end
   end
 
-  def setFrame
+  def set_frame
     change_interval = 5 #10 - @velosity
 
     if @nextFrame == change_interval
@@ -57,7 +58,7 @@ class GreenFish
     end
   end
 
-  def drawFish
+  def draw_fish
     r = @frame % 6 + 12
     l = @frame % 6 + 18
     image = @image
@@ -69,52 +70,23 @@ class GreenFish
     image.draw_rot @x, @y, 1, 0, 0.5, 0.5, @size, @size
   end
 
-  def substitudeTheFish
+  def eaten
+    set_new_fish
+  end
+
+  def substitude_the_fish
     if @x >= @window.width + @width * @size or @x <= 0 - @width * @size
-      setNewFish
-    end
-  end
-
-  def within_range?
-    (@x - @player.x).abs < @width * @size / 2 + @player.width * @player.size / 2 and 
-    (@y - @player.y).abs < 0.7 * (@height * @size / 2 + @player.height * @player.size / 2)
-  end
-
-  def smaller?
-    if @player.growth == :baby
-      @size < @player.size * 0.6
-    else 
-      @size < @player.size * 1.7
-    end
-  end
-
-  def eat?
-    within_range? && (not smaller?)
-  end
-
-  def eaten?
-    within_range? && smaller?
-  end
-
-  def eatOrBeEaten
-    if eaten?
-      @player.eat
-      setNewFish
-    end
-
-    if eat?
-      @player.dies
+      set_new_fish
     end
   end
 
   def update 
-    setFrame
-    eatOrBeEaten
+    set_frame
     move
-    substitudeTheFish
+    substitude_the_fish
   end
 
   def draw
-    drawFish
+    draw_fish
   end
 end

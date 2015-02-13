@@ -1,5 +1,6 @@
 require "gosu"
 require_relative 'jellyfish'
+require_relative 'green'
 
 class Player
   attr_accessor :x, :y, :size, :width, :height, :growth
@@ -42,15 +43,6 @@ class Player
     @height = @image.height * @size
   end
 
-  def eat
-    @score += 1
-    grow
-  end
-
-  def dies
-    @alive = false
-  end
-
   def go_right
     @lookLeft = false
     @x += @velosity
@@ -90,22 +82,11 @@ class Player
     @y %= @window.height
   end
 
-  def move 
+  def normal_move 
     go_left if @window.button_down? Gosu::KbLeft
     go_right if @window.button_down? Gosu::KbRight
     go_up if @window.button_down? Gosu::KbUp
     go_down if @window.button_down? Gosu::KbDown 
-  end
-
-  def jelly_within_range?
-    (@x - @jellyfish.x).abs < @width * @size / 2 + @jellyfish.width / 2 and 
-    (@y - @jellyfish.y).abs < @height * @size / 2 + @jellyfish.height / 2
-  end
-
-  def stinged
-    if jelly_within_range?
-      @stingedFor = 300
-    end
   end
 
   def stinged_move
@@ -116,15 +97,64 @@ class Player
     @stingedFor -= 1
   end
 
-  def update
+  def move 
+    if @stingedFor == 0
+      normal_move
+    else
+      stinged_move
+    end
+    stay_inside
+  end
+
+  def within_range? something
+    case something
+    when Jellyfish then
+      (@x - something.x).abs < @width * @size / 2 + something.width / 2 and 
+      (@y - something.y).abs < @height * @size / 2 + something.height / 2
+    when GreenFish then 
+      (@x - something.x).abs < @width * @size / 2 + something.width * something.size / 2 and 
+      (@y - something.y).abs < 0.7 * (@height * @size / 2 + something.height * something.size / 2)
+    end
+  end
+
+  def smaller_than? fish
+    if growth == :baby
+      fish.size > size * 0.6
+    else 
+      fish.size > size * 1.7
+    end 
+  end
+
+  def eat fish
+    if fish.instance_of? GreenFish and within_range? fish and not smaller_than? fish
+      @score += 1
+      grow
+      fish.eaten
+    end
+  end
+
+  def eaten_by? fish
+    fish.instance_of? GreenFish and within_range? fish and smaller_than? fish
+  end
+
+  def stinged_by jellyfish
+    if jellyfish.instance_of? Jellyfish and within_range? jellyfish
+      @stingedFor = 300
+    end
+  end
+
+  def interact_with_fish fish
+    if eaten_by? fish
+      @alive = false
+    else
+      eat fish
+    end
+  end
+
+  def update other
     if @alive
-      stinged
-      if @stingedFor == 0
-        move
-      else
-        stinged_move
-     end
-      stay_inside
+      stinged_by other
+      move
     end
   end
 

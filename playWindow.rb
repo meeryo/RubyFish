@@ -15,9 +15,11 @@ class GameWindow < Gosu::Window
   end
 
   def update
-    @player.update
-    @green_fish_array.each { |fish| fish.update }
     @jellyfish.update
+    @green_fish_array.each { |fish| @player.interact_with_fish fish }
+    @green_fish_array.each { |fish| fish.update }
+    @player.update @jellyfish
+
     close if button_down? Gosu::KbEscape
   end
 
